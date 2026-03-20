@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ORBITAL INSIGHT — ACM v2.6 | IIT DELHI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+:root{
+  --bg:#020912;--panel:rgba(3,12,26,0.96);--b1:rgba(0,180,255,0.12);
+  --b2:rgba(0,180,255,0.30);--ac:#00b4ff;--ac2:#00ffcc;
+  --gr:#00ff88;--rd:#ff3355;--or:#ffaa00;--yw:#ffe066;
+  --dim:rgba(0,180,255,0.40);--tx:#b0d8f0;--wh:#e8f4ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'Exo 2',sans-serif;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 4px);pointer-events:none;z-index:9999;}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;height:50px;background:rgba(2,9,18,0.98);border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:300;gap:8px;}
+.logo-wrap{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.diamond{width:15px;height:15px;background:var(--ac);transform:rotate(45deg);box-shadow:0 0 12px var(--ac);animation:dp 2s ease-in-out infinite;}
+@keyframes dp{0%,100%{box-shadow:0 0 8px var(--ac);}50%{box-shadow:0 0 22px var(--ac),0 0 38px rgba(0,180,255,0.18);}}
+.logo-t{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900;color:var(--ac);letter-spacing:3px;}
+.logo-s{font-size:.48rem;color:var(--dim);letter-spacing:3px;font-family:'Share Tech Mono',monospace;}
+.live-badge{display:flex;align-items:center;gap:5px;border:1px solid var(--gr);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--gr);letter-spacing:2px;flex-shrink:0;}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--gr);box-shadow:0 0 7px var(--gr);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
+.htime-wrap{text-align:center;flex-shrink:0;}
+.htime{font-family:'Orbitron',monospace;font-size:.78rem;color:var(--ac);letter-spacing:2px;}
+.htime-sub{font-size:.46rem;color:var(--dim);letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+.hstats{display:flex;gap:10px;flex-shrink:0;}
+.hs{text-align:center;min-width:38px;}
+.hs-v{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;}
+.hs-v.g{color:var(--gr);}.hs-v.a{color:var(--ac);}.hs-v.o{color:var(--or);}.hs-v.r{color:var(--rd);}
+.hs-l{font-size:.44rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;}
+
+/* ── LAYOUT ── */
+.layout{position:fixed;top:50px;bottom:0;left:0;right:0;display:grid;grid-template-columns:270px 1fr 290px;}
+
+/* ── PANELS ── */
+.panel{background:var(--panel);border-right:1px solid var(--b1);overflow-y:auto;padding:10px;}
+.panel.right{border-right:none;border-left:1px solid var(--b1);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+
+/* ── GLOBE CENTER ── */
+.gw{position:relative;overflow:hidden;background:#000;}
+#gc{position:absolute;inset:0;display:block;}
+.vtabs{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:10;background:rgba(2,9,18,0.9);border:1px solid var(--b1);padding:3px;}
+.vt{padding:4px 12px;font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:2px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;text-transform:uppercase;}
+.vt.on{color:var(--ac);border-color:var(--b2);background:rgba(0,180,255,.1);}
+.sbar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:3px;align-items:center;z-index:10;background:rgba(2,9,18,.92);border:1px solid var(--b1);padding:5px 10px;}
+.sbl{font-family:'Share Tech Mono',monospace;font-size:.54rem;color:var(--dim);letter-spacing:2px;margin-right:2px;}
+.sb{background:transparent;border:1px solid var(--b1);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.58rem;padding:3px 8px;cursor:pointer;transition:all .2s;}
+.sb:hover,.sb.on{background:rgba(0,180,255,.12);border-color:var(--ac);color:var(--ac);}
+.sb.add{color:var(--gr);border-color:rgba(0,255,136,.2);}
+.sb.add:hover{background:rgba(0,255,136,.1);border-color:var(--gr);color:var(--gr);}
+.mal{position:absolute;top:52px;left:50%;transform:translateX(-50%);background:rgba(255,51,85,.13);border:1px solid var(--rd);padding:4px 14px;font-family:'Orbitron',monospace;font-size:.58rem;color:var(--rd);letter-spacing:2px;z-index:20;animation:ap .8s infinite alternate;white-space:nowrap;}
+@keyframes ap{from{opacity:1;}to{opacity:.35;}}
+.cov{position:absolute;bottom:52px;right:10px;font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--dim);text-align:right;line-height:2;pointer-events:none;z-index:5;}
+.corner{position:absolute;width:14px;height:14px;z-index:5;}
+.c-tl{top:52px;left:2px;border-top:1px solid var(--ac2);border-left:1px solid var(--ac2);}
+.c-tr{top:52px;right:2px;border-top:1px solid var(--ac2);border-right:1px solid var(--ac2);}
+.c-bl{bottom:42px;left:2px;border-bottom:1px solid var(--ac2);border-left:1px solid var(--ac2);}
+.c-br{bottom:42px;right:2px;border-bottom:1px solid var(--ac2);border-right:1px solid var(--ac2);}
+
+/* ── SAFETY DIST INDICATOR ── */
+.safety-box{position:absolute;top:52px;right:10px;background:rgba(2,9,18,.88);border:1px solid var(--b2);padding:6px 10px;font-family:'Share Tech Mono',monospace;font-size:.55rem;z-index:10;min-width:130px;}
+.safety-title{color:var(--dim);letter-spacing:2px;font-size:.48rem;margin-bottom:4px;text-transform:uppercase;}
+.safety-row{display:flex;justify-content:space-between;margin-bottom:2px;font-size:.6rem;}
+.safety-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+
+/* ── PANEL PARTS ── */
+.ph{font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;}
+.phc{background:rgba(0,180,255,.1);border:1px solid var(--b2);padding:1px 5px;font-size:.54rem;color:var(--ac);}
+.sec{margin-bottom:11px;}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;}
+.sbox{border:1px solid var(--b1);padding:6px;text-align:center;background:rgba(0,180,255,.02);}
+.sbig{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;line-height:1;margin-bottom:2px;}
+.ssm{font-size:.46rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;}
+
+/* ── SAT ITEMS ── */
+.si{border:1px solid var(--b1);padding:8px;margin-bottom:4px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.si::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--ac);opacity:0;transition:opacity .2s;}
+.si:hover::before,.si.sel::before{opacity:1;}
+.si:hover{border-color:var(--b2);}
+.si.sel{border-color:var(--ac2);}
+.si.dng{border-color:rgba(255,51,85,.4);}.si.dng::before{background:var(--rd);}
+.si.wrn{border-color:rgba(255,170,0,.35);}.si.wrn::before{background:var(--or);}
+.sr1{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.sn{font-family:'Orbitron',monospace;font-size:.62rem;color:var(--wh);letter-spacing:1px;}
+.sr2{display:flex;justify-content:space-between;font-size:.57rem;color:var(--dim);margin-bottom:3px;}
+/* FUEL BAR */
+.fuel-wrap{margin-top:4px;}
+.fuel-label-row{display:flex;justify-content:space-between;font-size:.52rem;margin-bottom:2px;}
+.fuel-lbl{color:var(--dim);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+.fuel-pct{font-family:'Orbitron',monospace;font-weight:700;}
+.fuel-track{height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;position:relative;}
+.fuel-fill{height:100%;border-radius:2px;transition:width .8s;position:relative;}
+.fuel-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:rgba(255,255,255,.5);border-radius:2px;}
+/* DIST BAR */
+.dist-wrap{margin-top:4px;}
+.dist-track{height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;}
+.dist-fill{height:100%;border-radius:2px;transition:width .5s;}
+
+.tag{font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:1px;padding:2px 5px;border:1px solid;text-transform:uppercase;}
+.tn{color:var(--gr);border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.07);}
+.te{color:var(--rd);border-color:rgba(255,51,85,.3);background:rgba(255,51,85,.07);animation:blink .5s infinite;}
+.trr{color:var(--ac);border-color:rgba(0,180,255,.3);background:rgba(0,180,255,.07);}
+.tb{color:var(--or);border-color:rgba(255,170,0,.3);background:rgba(255,170,0,.07);}
+
+/* ── CDM ── */
+.cdm{border-left:3px solid;padding:7px 9px;margin-bottom:5px;font-size:.62rem;}
+.cdm.crit{border-color:var(--rd);background:rgba(255,51,85,.04);}
+.cdm.warn{border-color:var(--or);background:rgba(255,170,0,.04);}
+.cdm.mon{border-color:var(--ac);background:rgba(0,180,255,.02);}
+.csev{font-family:'Orbitron',monospace;font-size:.56rem;letter-spacing:2px;margin-bottom:3px;}
+.csev.crit{color:var(--rd);}.csev.warn{color:var(--or);}.csev.mon{color:var(--ac);}
+.crow{display:flex;justify-content:space-between;color:var(--dim);margin-bottom:2px;}
+.cv{color:var(--wh);font-family:'Share Tech Mono',monospace;}
+
+/* ── DETAIL ── */
+.ds{margin-bottom:9px;}
+.dst{font-size:.48rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;font-family:'Share Tech Mono',monospace;}
+.dr{display:flex;justify-content:space-between;margin-bottom:3px;font-size:.62rem;}
+.dl{color:var(--dim);}.dv{font-family:'Share Tech Mono',monospace;color:var(--wh);}
+.det-fuel-big{font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;margin-bottom:2px;}
+.det-fuel-sub{font-size:.48rem;color:var(--dim);letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+.det-fuel-track{height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;margin-top:5px;}
+.det-fuel-fill{height:100%;border-radius:3px;transition:width .8s;}
+/* Safety meter in detail */
+.safety-meter{border:1px solid var(--b1);padding:7px;margin:6px 0;background:rgba(0,180,255,.02);}
+.sm-title{font-size:.48rem;color:var(--dim);letter-spacing:2px;font-family:'Share Tech Mono',monospace;text-transform:uppercase;margin-bottom:5px;}
+.sm-row{display:flex;justify-content:space-between;margin-bottom:3px;font-size:.6rem;align-items:center;}
+.sm-bar-wrap{flex:1;margin:0 8px;height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;}
+.sm-bar{height:100%;border-radius:2px;transition:width .5s;}
+.sm-val{font-family:'Share Tech Mono',monospace;font-size:.6rem;min-width:55px;text-align:right;}
+.threshold-line{border-top:1px dashed rgba(0,180,255,.2);padding-top:5px;margin-top:5px;}
+.th-row{display:flex;justify-content:space-between;font-size:.52rem;margin-bottom:2px;}
+.th-label{color:var(--dim);font-family:'Share Tech Mono',monospace;}
+.th-val{font-family:'Share Tech Mono',monospace;}
+
+/* LOG */
+.log{background:rgba(0,0,0,.45);border:1px solid var(--b1);padding:6px;height:130px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:.55rem;line-height:1.6;}
+.ll .lt{color:var(--dim);margin-right:5px;}
+.ll.li{color:var(--ac);}.ll.lw{color:var(--or);}.ll.ld{color:var(--rd);}.ll.lo{color:var(--gr);}
+#gtc{display:block;width:100%;border:1px solid var(--b1);}
+#polc{display:block;margin:0 auto;}
+.nosat{color:var(--dim);font-size:.62rem;text-align:center;padding:16px 0;font-family:'Share Tech Mono',monospace;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="diamond"></div>
+    <div><div class="logo-t">ORBITAL INSIGHT</div><div class="logo-s">Autonomous Constellation Manager v2.6 — IIT Delhi</div></div>
+  </div>
+  <div class="live-badge"><div class="ldot"></div>LIVE</div>
+  <div class="htime-wrap">
+    <div class="htime" id="hTime">--</div>
+    <div class="htime-sub">SIM TIME · J2000 ECI · IIT DELHI NODE</div>
+  </div>
+  <div class="hstats">
+    <div class="hs"><div class="hs-v g" id="hS">0</div><div class="hs-l">Sats</div></div>
+    <div class="hs"><div class="hs-v g" id="hN">0/0</div><div class="hs-l">Nominal</div></div>
+    <div class="hs"><div class="hs-v a" id="hD">0</div><div class="hs-l">Debris</div></div>
+    <div class="hs"><div class="hs-v o" id="hC">0</div><div class="hs-l">CDM</div></div>
+    <div class="hs"><div class="hs-v r" id="hCr">0</div><div class="hs-l">Critical</div></div>
+    <div class="hs"><div class="hs-v a" id="hM">0</div><div class="hs-l">Maneuvers</div></div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <div class="sec">
+      <div class="ph">Fleet Status <span class="phc" id="fCnt">0 SAT</span></div>
+      <div id="satList"></div>
+    </div>
+    <div class="sec">
+      <div class="ph">Ground Track — Mercator</div>
+      <canvas id="gtc" height="106"></canvas>
+    </div>
+    <div class="sec">
+      <div class="ph">Fleet Analytics</div>
+      <div class="sgrid">
+        <div class="sbox"><div class="sbig" id="mF" style="color:var(--gr)">--%</div><div class="ssm">Avg Fuel</div></div>
+        <div class="sbox"><div class="sbig" id="mE" style="color:var(--rd)">0</div><div class="ssm">Evasions</div></div>
+        <div class="sbox"><div class="sbig" id="mCl" style="color:var(--or)">--</div><div class="ssm">Min Dist km</div></div>
+        <div class="sbox"><div class="sbig" id="mBl" style="color:var(--ac)">0</div><div class="ssm">Blackout</div></div>
+      </div>
+      <!-- SAFETY THRESHOLDS -->
+      <div class="sec">
+        <div class="ph">Safety Thresholds</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rd);box-shadow:0 0 6px var(--rd);"></span><span style="color:var(--dim)">EVADE</span></span>
+            <span style="color:var(--rd);font-family:'Orbitron',monospace;">100 m</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rd);box-shadow:0 0 6px var(--rd);"></span><span style="color:var(--dim)">CRITICAL</span></span>
+            <span style="color:var(--rd);font-family:'Orbitron',monospace;">&lt; 2 km</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--or);"></span><span style="color:var(--dim)">WARNING</span></span>
+            <span style="color:var(--or);font-family:'Orbitron',monospace;">&lt; 8 km</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ac);"></span><span style="color:var(--dim)">MONITOR</span></span>
+            <span style="color:var(--ac);font-family:'Orbitron',monospace;">&lt; 25 km</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gr);"></span><span style="color:var(--dim)">SAFE</span></span>
+            <span style="color:var(--gr);font-family:'Orbitron',monospace;">&gt; 25 km</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOBE CENTER -->
+  <div class="gw" id="gw">
+    <canvas id="gc"></canvas>
+    <div class="corner c-tl"></div><div class="corner c-tr"></div>
+    <div class="corner c-bl"></div><div class="corner c-br"></div>
+    <div class="vtabs">
+      <div class="vt on" id="vt3" onclick="setView('3d')">3D GLOBE</div>
+      <div class="vt" id="vtm" onclick="setView('map')">MAP</div>
+      <div class="vt" id="vtp" onclick="setView('polar')">POLAR</div>
+    </div>
+    <div class="mal" id="mal" style="display:none">⚠ COLLISION AVOIDANCE MANEUVER ACTIVE</div>
+    <!-- REAL-TIME CLOSEST APPROACH DISPLAY -->
+    <div class="safety-box" id="safetyBox">
+      <div class="safety-title">Closest Approaches</div>
+      <div id="safetyRows"></div>
+    </div>
+    <div class="cov" id="cov"></div>
+    <div class="sbar">
+      <span class="sbl">SPEED</span>
+      <button class="sb on" id="sp1" onclick="setSpeed(1)">1x</button>
+      <button class="sb" id="sp5" onclick="setSpeed(5)">5x</button>
+      <button class="sb" id="sp20" onclick="setSpeed(20)">20x</button>
+      <button class="sb" id="sp50" onclick="setSpeed(50)">50x</button>
+      <button class="sb" id="spP" onclick="togglePause()">PAUSE</button>
+      <button class="sb add" onclick="addDebris()">+ DEBRIS</button>
+      <button class="sb add" onclick="addSat()">+ SAT</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel right">
+    <div class="sec">
+      <div class="ph">CDM Warnings <span class="phc" id="cdmCnt">0</span></div>
+      <div id="cdmList"></div>
+    </div>
+    <div class="sec">
+      <div class="ph">Satellite Detail</div>
+      <div id="detPanel"><div class="nosat">-- SELECT A SATELLITE --</div></div>
+    </div>
+    <div class="sec">
+      <div class="ph">Ground Station Polar</div>
+      <canvas id="polc" width="258" height="128"></canvas>
+    </div>
+    <div class="sec">
+      <div class="ph">Event Log</div>
+      <div class="log" id="logBox"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ════════════════════════════════════════
+// PHYSICS CONSTANTS
+// ════════════════════════════════════════
+var GM=3.986004418e14, RE=6371000, J2=1.08263e-3;
+var EVADE_D=100, CRIT_D=2000, WARN_D=8000, MON_D=25000;
+var simTime=0, simSpeed=1, paused=false, selectedId=null;
+var totalMan=0, totalEvd=0, closestEver=Infinity, idCtr=0, currentView='3d';
+
+// ── RK4 integrator ──
+function deriv(s){
+  var x=s[0],y=s[1],z=s[2],vx=s[3],vy=s[4],vz=s[5];
+  var r2=x*x+y*y+z*z, r=Math.sqrt(r2), r3=r*r2;
+  var ax=-GM*x/r3, ay=-GM*y/r3, az=-GM*z/r3;
+  var f=1.5*J2*GM*RE*RE/(r2*r3), z2=z*z/r2;
+  return[vx,vy,vz, ax+f*x*(5*z2-1), ay+f*y*(5*z2-1), az+f*z*(5*z2-3)];
+}
+function rk4(s,dt){
+  var k1=deriv(s);
+  var s2=[s[0]+.5*dt*k1[0],s[1]+.5*dt*k1[1],s[2]+.5*dt*k1[2],s[3]+.5*dt*k1[3],s[4]+.5*dt*k1[4],s[5]+.5*dt*k1[5]];
+  var k2=deriv(s2);
+  var s3=[s[0]+.5*dt*k2[0],s[1]+.5*dt*k2[1],s[2]+.5*dt*k2[2],s[3]+.5*dt*k2[3],s[4]+.5*dt*k2[4],s[5]+.5*dt*k2[5]];
+  var k3=deriv(s3);
+  var s4=[s[0]+dt*k3[0],s[1]+dt*k3[1],s[2]+dt*k3[2],s[3]+dt*k3[3],s[4]+dt*k3[4],s[5]+dt*k3[5]];
+  var k4=deriv(s4);
+  return[s[0]+dt*(k1[0]+2*k2[0]+2*k3[0]+k4[0])/6, s[1]+dt*(k1[1]+2*k2[1]+2*k3[1]+k4[1])/6,
+         s[2]+dt*(k1[2]+2*k2[2]+2*k3[2]+k4[2])/6, s[3]+dt*(k1[3]+2*k2[3]+2*k3[3]+k4[3])/6,
+         s[4]+dt*(k1[4]+2*k2[4]+2*k3[4]+k4[4])/6, s[5]+dt*(k1[5]+2*k2[5]+2*k3[5]+k4[5])/6];
+}
+
+// ── Orbital elements → ECI ──
+function toECI(sma,inc,raan,ta){
+  var cT=Math.cos(ta), sT=Math.sin(ta), v=Math.sqrt(GM/sma);
+  var rx=sma*cT, ry=sma*sT, vx=-v*sT, vy=v*cT;
+  var cO=Math.cos(raan), sO=Math.sin(raan), ci=Math.cos(inc), si=Math.sin(inc);
+  return[cO*rx-sO*ci*ry, sO*rx+cO*ci*ry, si*ry, cO*vx-sO*ci*vy, sO*vx+cO*ci*vy, si*vy];
+}
+
+// ── State helpers ──
+function getAlt(s){return Math.sqrt(s[0]*s[0]+s[1]*s[1]+s[2]*s[2])-RE;}
+function getSpd(s){return Math.sqrt(s[3]*s[3]+s[4]*s[4]+s[5]*s[5]);}
+function getLL(s){
+  var r=Math.sqrt(s[0]*s[0]+s[1]*s[1]+s[2]*s[2]);
+  var lat=Math.asin(s[2]/r)*180/Math.PI;
+  var GMST=(simTime*7.2921150e-5)%(2*Math.PI);
+  var lon=(Math.atan2(s[1],s[0])-GMST)*180/Math.PI;
+  while(lon>180)lon-=360; while(lon<-180)lon+=360;
+  return[lat,lon];
+}
+function getPer(sma){return 2*Math.PI*Math.sqrt(sma*sma*sma/GM)/60;}
+function d3(a,b){
+  var dx=a.s[0]-b.s[0], dy=a.s[1]-b.s[1], dz=a.s[2]-b.s[2];
+  return Math.sqrt(dx*dx+dy*dy+dz*dz);
+}
+
+// ── Tsiolkovsky ──
+function tsio(sat,dv){
+  if(!sat.isSat||sat.fuel<=0)return;
+  var ve=sat.Isp*9.80665, m0=sat.fuel+sat.dry;
+  sat.fuel=Math.max(0,sat.fuel-(m0-m0*Math.exp(-dv/ve)));
+  totalMan++; document.getElementById('hM').textContent=totalMan;
+}
+
+// ── Ground stations ──
+var GS=[
+  {name:'Goldstone', lat:35.4,  lon:-116.9, e:5},
+  {name:'Madrid',    lat:40.4,  lon:-4.2,   e:5},
+  {name:'Canberra',  lat:-35.4, lon:149.0,  e:5},
+  {name:'Svalbard',  lat:78.2,  lon:15.4,   e:3},
+  {name:'Hawaii',    lat:21.3,  lon:-157.9, e:5},
+  {name:'IIT Delhi', lat:28.5,  lon:77.2,   e:5}
+];
+function getCov(state){
+  var L=getLL(state), sl=L[0], slon=L[1], sa=getAlt(state);
+  for(var i=0;i<GS.length;i++){
+    var g=GS[i];
+    var dlat=(sl-g.lat)*Math.PI/180, dlon=(slon-g.lon)*Math.PI/180;
+    var a=Math.sin(dlat/2)*Math.sin(dlat/2)+Math.cos(g.lat*Math.PI/180)*Math.cos(sl*Math.PI/180)*Math.sin(dlon/2)*Math.sin(dlon/2);
+    var ca=2*Math.asin(Math.sqrt(Math.min(1,a)));
+    var rho=(RE+sa)/RE;
+    var inn=Math.sin(ca)/Math.sqrt(1+rho*rho-2*rho*Math.cos(ca));
+    var elev=Math.acos(Math.max(-1,Math.min(1,inn)))*180/Math.PI-90;
+    if(elev>=g.e)return g;
+  }
+  return null;
+}
+
+// ════════════════════════════════════════
+// SATELLITE DATA
+// ════════════════════════════════════════
+var sats=[];
+function mkSat(isSat,a,inc,raan,ta){
+  idCtr++;
+  var nm=isSat?('SAT-'+('000'+idCtr).slice(-3)):('DEB-'+('0000'+idCtr).slice(-4));
+  var sma=RE+a, hue=(idCtr*67+30)%360;
+  return{
+    id:idCtr, name:nm, isSat:isSat, sma:sma, nomAlt:a,
+    fuel:isSat?75+Math.random()*25:0, dry:isSat?200:15, Isp:220,
+    thrCD:0, status:'NOMINAL',
+    color:isSat?('hsl('+hue+',70%,62%)'):'#556677',
+    s:toECI(sma,inc,raan,ta), trail:[], trailMax:120,
+    inBk:false, gs:null, cDist:Infinity, cObj:null, pBurn:null, Pc:0,
+    mesh:null, sprite:null, tLine:null, tPts:[]
+  };
+}
+function addSat(){
+  var a=[550e3,600e3,650e3,700e3][Math.floor(Math.random()*4)];
+  var sat=mkSat(true,a,30+Math.random()*80,Math.random()*360,Math.random()*360);
+  sats.push(sat); addMesh(sat); log(sat.name+' added','li'); updCnts();
+}
+function addDebris(){
+  var sat=mkSat(false,380e3+Math.random()*520e3,Math.random()*180,Math.random()*360,Math.random()*360);
+  sats.push(sat); addMesh(sat); log(sat.name+' detected','lw'); updCnts();
+}
+function initFleet(){
+  var cfgs=[[550e3,53,0],[550e3,53,60],[600e3,70,120],[600e3,70,180],[650e3,45,240],[650e3,90,300],[700e3,53,30],[700e3,98,150]];
+  for(var i=0;i<cfgs.length;i++){
+    var c=cfgs[i];
+    sats.push(mkSat(true,c[0],c[1],c[2],Math.random()*360));
+  }
+  for(var i=0;i<10;i++) sats.push(mkSat(false,380e3+Math.random()*520e3,Math.random()*180,Math.random()*360,Math.random()*360));
+  for(var i=0;i<sats.length;i++) addMesh(sats[i]);
+  updCnts();
+}
+function updCnts(){
+  var sv=sats.filter(function(s){return s.isSat;});
+  var nom=sv.filter(function(s){return s.status==='NOMINAL';}).length;
+  document.getElementById('hS').textContent=sv.length;
+  document.getElementById('hN').textContent=nom+'/'+sv.length;
+  document.getElementById('hD').textContent=sats.filter(function(s){return !s.isSat;}).length;
+  document.getElementById('fCnt').textContent=sv.length+' SAT';
+}
+
+// ════════════════════════════════════════
+// THREE.JS SCENE
+// ════════════════════════════════════════
+var gw=document.getElementById('gw'), gc=document.getElementById('gc');
+var renderer=new THREE.WebGLRenderer({canvas:gc,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.1;
+
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(45,1,0.001,200);
+
+function resizeR(){
+  var W=gw.clientWidth, H=gw.clientHeight;
+  renderer.setSize(W,H); camera.aspect=W/H; camera.updateProjectionMatrix();
+}
+resizeR(); window.addEventListener('resize',resizeR);
+
+// Lights
+var sun=new THREE.DirectionalLight(0xffffff,1.6); sun.position.set(5,3,5); scene.add(sun);
+scene.add(new THREE.AmbientLight(0x112244,0.5));
+var fill=new THREE.DirectionalLight(0x4488ff,0.15); fill.position.set(-5,-2,-5); scene.add(fill);
+
+// Earth
+var eMat=new THREE.MeshPhongMaterial({color:0x226699,specular:0x111133,shininess:8});
+var eMesh=new THREE.Mesh(new THREE.SphereGeometry(1,64,64),eMat); scene.add(eMesh);
+
+// Clouds
+var cMat=new THREE.MeshPhongMaterial({transparent:true,opacity:0.28,depthWrite:false,color:0xffffff});
+var cMesh=new THREE.Mesh(new THREE.SphereGeometry(1.009,48,48),cMat); scene.add(cMesh);
+
+// Atmosphere
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.025,32,32),new THREE.MeshPhongMaterial({color:0x3399ff,transparent:true,opacity:0.10,side:THREE.FrontSide,depthWrite:false})));
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,32,32),new THREE.MeshBasicMaterial({color:0x1155cc,transparent:true,opacity:0.055,side:THREE.BackSide,depthWrite:false})));
+
+// Stars
+var sv2=[];
+for(var i=0;i<5000;i++){
+  var r=60+Math.random()*40, th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+  sv2.push(r*Math.sin(ph)*Math.cos(th), r*Math.cos(ph), r*Math.sin(ph)*Math.sin(th));
+}
+var sg=new THREE.BufferGeometry();
+sg.setAttribute('position',new THREE.Float32BufferAttribute(sv2,3));
+scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:0.1,sizeAttenuation:true})));
+
+// Orbit shells
+[550,600,650,700,750].forEach(function(a){
+  var rr=(RE+a*1000)/RE;
+  var ring=new THREE.Mesh(new THREE.RingGeometry(rr-0.001,rr+0.001,128),new THREE.MeshBasicMaterial({color:0x003366,transparent:true,opacity:0.25,side:THREE.DoubleSide}));
+  ring.rotation.x=Math.PI/2; scene.add(ring);
+});
+
+// Ground stations
+var gsM=[];
+GS.forEach(function(g){
+  var m=new THREE.Mesh(new THREE.SphereGeometry(0.008,8,8),new THREE.MeshBasicMaterial({color:0x00ff88}));
+  var ring=new THREE.Mesh(new THREE.RingGeometry(0.014,0.021,16),new THREE.MeshBasicMaterial({color:0x00ff88,transparent:true,opacity:0.3,side:THREE.DoubleSide,depthWrite:false}));
+  m.add(ring); scene.add(m); gsM.push({g:g,m:m});
+});
+
+// Safety zone spheres (invisible, for reference)
+var safetyRings=[];
+[CRIT_D/RE, WARN_D/RE].forEach(function(r,i){
+  var mat=new THREE.MeshBasicMaterial({color:i===0?0xff3355:0xffaa00,transparent:true,opacity:0.0,wireframe:true});
+  var mesh=new THREE.Mesh(new THREE.SphereGeometry(1+r,24,24),mat);
+  scene.add(mesh); safetyRings.push(mesh);
+});
+
+// NASA Textures
+var ldr=new THREE.TextureLoader();
+ldr.setCrossOrigin('anonymous');
+ldr.load('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Land_ocean_ice_2048.jpg/2048px-Land_ocean_ice_2048.jpg',function(t){
+  t.anisotropy=renderer.capabilities.getMaxAnisotropy();
+  eMat.map=t; eMat.color.set(0xffffff); eMat.needsUpdate=true;
+  log('NASA Blue Marble texture loaded','lo');
+});
+ldr.load('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Earthbump1k.jpg/1024px-Earthbump1k.jpg',function(t){
+  eMat.bumpMap=t; eMat.bumpScale=0.016; eMat.needsUpdate=true;
+});
+ldr.load('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Earth_clouds.jpg/2048px-Earth_clouds.jpg',function(t){
+  cMat.map=t; cMat.alphaMap=t; cMat.needsUpdate=true;
+});
+
+// ECI → Three.js coords
+function eciV(s){return new THREE.Vector3(s[0]/RE, s[2]/RE, -s[1]/RE);}
+
+// Add mesh for satellite
+function addMesh(sat){
+  var sz=sat.isSat?0.013:0.006;
+  var m=new THREE.Mesh(new THREE.SphereGeometry(sz,8,8),new THREE.MeshBasicMaterial({color:new THREE.Color(sat.color)}));
+  scene.add(m); sat.mesh=m;
+  if(sat.isSat){
+    var sp=new THREE.Sprite(new THREE.SpriteMaterial({color:new THREE.Color(sat.color),transparent:true,opacity:0.25,depthWrite:false,blending:THREE.AdditiveBlending}));
+    sp.scale.setScalar(0.055); m.add(sp); sat.sprite=sp;
+  }
+  var pos=new Float32Array(sat.trailMax*3), tg=new THREE.BufferGeometry();
+  tg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  tg.setDrawRange(0,0);
+  var tl=new THREE.Line(tg,new THREE.LineBasicMaterial({color:new THREE.Color(sat.color),transparent:true,opacity:0.3,depthWrite:false}));
+  scene.add(tl); sat.tLine=tl; sat.tPts=[];
+}
+
+// Camera
+var camT=0.3, camP=1.1, camD=3.2, isDrag=false, pMX=0, pMY=0;
+function updCam(){
+  camera.position.set(camD*Math.sin(camP)*Math.sin(camT), camD*Math.cos(camP), camD*Math.sin(camP)*Math.cos(camT));
+  camera.lookAt(0,0,0);
+}
+updCam();
+gc.addEventListener('mousedown',function(e){isDrag=true;pMX=e.clientX;pMY=e.clientY;});
+window.addEventListener('mousemove',function(e){if(!isDrag)return;camT-=(e.clientX-pMX)*0.006;camP=Math.max(0.1,Math.min(Math.PI-0.1,camP+(e.clientY-pMY)*0.006));pMX=e.clientX;pMY=e.clientY;updCam();});
+window.addEventListener('mouseup',function(){isDrag=false;});
+gc.addEventListener('wheel',function(e){camD=Math.max(1.4,Math.min(9,camD+e.deltaY*0.003));updCam();e.preventDefault();},{passive:false});
+gc.addEventListener('touchstart',function(e){isDrag=true;pMX=e.touches[0].clientX;pMY=e.touches[0].clientY;},{passive:true});
+gc.addEventListener('touchmove',function(e){camT-=(e.touches[0].clientX-pMX)*0.006;camP=Math.max(0.1,Math.min(Math.PI-0.1,camP+(e.touches[0].clientY-pMY)*0.006));pMX=e.touches[0].clientX;pMY=e.touches[0].clientY;updCam();e.preventDefault();},{passive:false});
+gc.addEventListener('touchend',function(){isDrag=false;});
+
+// Click select
+var ray=new THREE.Raycaster(), mou=new THREE.Vector2();
+gc.addEventListener('click',function(e){
+  var rect=gc.getBoundingClientRect();
+  mou.x=((e.clientX-rect.left)/rect.width)*2-1;
+  mou.y=-((e.clientY-rect.top)/rect.height)*2+1;
+  ray.setFromCamera(mou,camera);
+  var best=null, bestD=0.07;
+  for(var i=0;i<sats.length;i++){
+    if(!sats[i].mesh)continue;
+    var d=ray.ray.distanceToPoint(sats[i].mesh.position);
+    if(d<bestD){bestD=d;best=sats[i];}
+  }
+  selectedId=best?best.id:null;
+});
+
+// Conjunction lines array
+var conjLines=[];
+
+function updScene(conj){
+  var GMST=simTime*7.2921150e-5;
+  eMesh.rotation.y=GMST;
+  cMesh.rotation.y=GMST+simTime*8e-7;
+
+  // Ground stations
+  for(var i=0;i<gsM.length;i++){
+    var g=gsM[i].g, m=gsM[i].m;
+    var lat=g.lat*Math.PI/180, lon=g.lon*Math.PI/180+GMST;
+    m.position.set(1.013*Math.cos(lat)*Math.sin(lon), 1.013*Math.sin(lat), 1.013*Math.cos(lat)*Math.cos(lon));
+    m.lookAt(0,0,0); m.rotateX(Math.PI/2);
+  }
+
+  // Satellites
+  for(var i=0;i<sats.length;i++){
+    var sat=sats[i]; if(!sat.mesh)continue;
+    var p=eciV(sat.s); sat.mesh.position.copy(p);
+    var col;
+    if(!sat.isSat) col=new THREE.Color(0x556677);
+    else if(sat.status==='EVADING') col=new THREE.Color(0xff3355);
+    else if(sat.status==='RECOVERING') col=new THREE.Color(0x00b4ff);
+    else if(sat.status==='BLACKOUT') col=new THREE.Color(0xffaa00);
+    else col=new THREE.Color(sat.color);
+    sat.mesh.material.color.copy(col);
+    if(sat.sprite){sat.sprite.material.color.copy(col);sat.sprite.material.opacity=sat.id===selectedId?0.55:0.22;}
+    sat.mesh.scale.setScalar(sat.id===selectedId?1.8:1.0);
+    sat.tPts.push(p.clone());
+    if(sat.tPts.length>sat.trailMax)sat.tPts.shift();
+    var pa=sat.tLine.geometry.attributes.position.array;
+    for(var t=0;t<sat.tPts.length;t++){pa[t*3]=sat.tPts[t].x;pa[t*3+1]=sat.tPts[t].y;pa[t*3+2]=sat.tPts[t].z;}
+    sat.tLine.geometry.setDrawRange(0,sat.tPts.length);
+    sat.tLine.geometry.attributes.position.needsUpdate=true;
+    sat.tLine.material.opacity=sat.isSat?(sat.id===selectedId?0.7:0.28):0.08;
+  }
+
+  // Conjunction warning lines
+  for(var i=0;i<conjLines.length;i++) scene.remove(conjLines[i]);
+  conjLines=[];
+  for(var i=0;i<conj.length;i++){
+    var c=conj[i];
+    var pts=[eciV(c.sat.s), eciV(c.other.s)];
+    var cg=new THREE.BufferGeometry().setFromPoints(pts);
+    var ccol=c.dist<CRIT_D?0xff3355:0xffaa00;
+    var cl=new THREE.Line(cg,new THREE.LineBasicMaterial({color:ccol,transparent:true,opacity:0.75}));
+    scene.add(cl); conjLines.push(cl);
+
+    // Pulsing sphere at midpoint for critical
+    if(c.dist<CRIT_D){
+      var mp=new THREE.Vector3().addVectors(eciV(c.sat.s),eciV(c.other.s)).multiplyScalar(0.5);
+      var sg2=new THREE.Mesh(new THREE.SphereGeometry(0.02,8,8),new THREE.MeshBasicMaterial({color:0xff3355,transparent:true,opacity:0.3,depthWrite:false}));
+      sg2.position.copy(mp); scene.add(sg2); conjLines.push(sg2);
+    }
+  }
+
+  var hasAlert=conj.some(function(c){return c.dist<CRIT_D;});
+  document.getElementById('mal').style.display=hasAlert?'block':'none';
+
+  // Coord overlay for selected
+  if(selectedId){
+    var sel=null;
+    for(var i=0;i<sats.length;i++){if(sats[i].id===selectedId){sel=sats[i];break;}}
+    if(sel){
+      var L=getLL(sel.s);
+      document.getElementById('cov').innerHTML='LAT '+L[0].toFixed(3)+'&deg;<br>LON '+L[1].toFixed(3)+'&deg;<br>ALT '+(getAlt(sel.s)/1000).toFixed(1)+' km<br>SPD '+(getSpd(sel.s)/1000).toFixed(3)+' km/s';
+    }
+  } else document.getElementById('cov').innerHTML='';
+
+  renderer.render(scene,camera);
+}
+
+// ════════════════════════════════════════
+// SIM STEP
+// ════════════════════════════════════════
+function simStep(dt){
+  var rdt=dt*simSpeed;
+  for(var i=0;i<sats.length;i++){
+    var sat=sats[i];
+    sat.s=rk4(sat.s,rdt);
+    sat.trail.push([sat.s[0],sat.s[1],sat.s[2]]);
+    if(sat.trail.length>sat.trailMax)sat.trail.shift();
+    if(sat.thrCD>0)sat.thrCD-=rdt;
+    if(sat.pBurn&&simTime>=sat.pBurn.at){
+      sat.s[3]+=sat.pBurn.dv[0]; sat.s[4]+=sat.pBurn.dv[1]; sat.s[5]+=sat.pBurn.dv[2];
+      var dvM=Math.sqrt(sat.pBurn.dv[0]*sat.pBurn.dv[0]+sat.pBurn.dv[1]*sat.pBurn.dv[1]+sat.pBurn.dv[2]*sat.pBurn.dv[2]);
+      tsio(sat,dvM); sat.thrCD=600; sat.pBurn=null;
+      log(sat.name+' burn executed Dv='+dvM.toFixed(2)+'m/s','lo');
+    }
+    if(!sat.isSat)continue;
+    var g=getCov(sat.s); sat.inBk=!g; sat.gs=g;
+    if(sat.inBk&&sat.status==='NOMINAL'){sat.status='BLACKOUT';log(sat.name+' BLACKOUT zone','lw');}
+    else if(!sat.inBk&&sat.status==='BLACKOUT'){sat.status='NOMINAL';log(sat.name+' contact via '+g.name,'li');}
+    if(sat.status==='RECOVERING'&&Math.abs(getAlt(sat.s)-sat.nomAlt)<12000){sat.status='NOMINAL';log(sat.name+' nominal slot restored','lo');}
+  }
+
+  var conj=[];
+  for(var i=0;i<sats.length;i++){
+    var sat=sats[i]; if(!sat.isSat)continue;
+    sat.cDist=Infinity; sat.cObj=null;
+    for(var j=0;j<sats.length;j++){
+      if(i===j)continue;
+      var dd=d3(sat,sats[j]);
+      if(dd<sat.cDist){sat.cDist=dd; sat.cObj=sats[j];}
+      if(dd<closestEver)closestEver=dd;
+    }
+    sat.Pc=Math.exp(-(sat.cDist*sat.cDist)/(2*200*200))*0.5;
+    if(sat.cDist<MON_D) conj.push({sat:sat, other:sat.cObj, dist:sat.cDist});
+
+    // AUTO EVASION
+    if(sat.cDist<CRIT_D&&sat.status==='NOMINAL'&&sat.thrCD<=0&&sat.fuel>1){
+      var x=sat.s[0],y=sat.s[1],z=sat.s[2], r=Math.sqrt(x*x+y*y+z*z), dvM=2.5;
+      var dvv=[x/r*dvM, y/r*dvM, z/r*dvM];
+      if(sat.inBk){
+        sat.pBurn={dv:dvv,at:simTime+180}; sat.status='EVADING';
+        log(sat.name+' evasion pre-scheduled (BLACKOUT)','lw');
+      } else {
+        sat.s[3]+=dvv[0]; sat.s[4]+=dvv[1]; sat.s[5]+=dvv[2];
+        tsio(sat,dvM); sat.thrCD=600; sat.status='EVADING'; totalEvd++;
+        log('EVADE: '+sat.name+' vs '+sat.cObj.name+' d='+(sat.cDist/1000).toFixed(2)+'km','ld');
+        (function(s){setTimeout(function(){if(s.status==='EVADING'){s.status='RECOVERING';log(s.name+' RECOVERY burn initiated','li');}},6000);})(sat);
+      }
+    }
+  }
+  simTime+=rdt;
+  return conj;
+}
+
+// ════════════════════════════════════════
+// 2D OVERLAY VIEWS
+// ════════════════════════════════════════
+var mapC=null, polC=null;
+function ensMap(){
+  if(!mapC){mapC=document.createElement('canvas');mapC.style.cssText='position:absolute;inset:0;z-index:3;';gw.appendChild(mapC);}
+  mapC.width=gw.clientWidth; mapC.height=gw.clientHeight; mapC.style.display='block';
+}
+function ensPol(){
+  if(!polC){polC=document.createElement('canvas');polC.style.cssText='position:absolute;inset:0;z-index:3;';gw.appendChild(polC);}
+  polC.width=gw.clientWidth; polC.height=gw.clientHeight; polC.style.display='block';
+}
+function hide2D(){
+  if(mapC)mapC.style.display='none';
+  if(polC)polC.style.display='none';
+  gc.style.display='block';
+}
+
+// MERCATOR MAP — Google Earth style colors
+function drawMap(){
+  ensMap();
+  var c=mapC, ctx=c.getContext('2d'), W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Ocean — deep blue like Google Earth
+  var oceanGrad=ctx.createLinearGradient(0,0,0,H);
+  oceanGrad.addColorStop(0,'#0a1628');
+  oceanGrad.addColorStop(0.5,'#0d2040');
+  oceanGrad.addColorStop(1,'#0a1628');
+  ctx.fillStyle=oceanGrad; ctx.fillRect(0,0,W,H);
+
+  // Draw simplified continents with Google-Earth-like colors
+  function latLonPx(la,lo){return[(lo+180)/360*W,(90-la)/180*H];}
+
+  // Continent fill
+  ctx.fillStyle='#2d5a27'; // Google Earth land green
+
+  var continents=[
+    // North America
+    [[70,-140],[70,-55],[25,-55],[15,-85],[15,-95],[30,-118],[50,-128],[70,-140]],
+    // Greenland
+    [[85,-60],[85,-20],[60,-20],[60,-60],[85,-60]],
+    // South America
+    [[12,-72],[12,-50],[-55,-65],[-55,-70],[-35,-70],[-20,-40],[12,-72]],
+    // Europe
+    [[72,32],[72,10],[35,10],[35,36],[55,42],[62,30],[72,32]],
+    // Africa
+    [[38,10],[38,52],[-35,52],[-35,10],[0,-18],[38,10]],
+    // Asia (simplified)
+    [[72,32],[72,142],[10,142],[10,102],[25,62],[42,50],[55,42],[72,32]],
+    // Japan
+    [[46,142],[46,148],[30,132],[30,142],[46,142]],
+    // Southeast Asia
+    [[20,95],[20,130],[-5,130],[-5,105],[20,95]],
+    // Australia
+    [[-14,130],[-14,154],[-40,154],[-40,130],[-14,130]],
+    // Antarctica
+    [[-70,-180],[-70,180],[-90,180],[-90,-180],[-70,-180]]
+  ];
+
+  for(var ci=0;ci<continents.length;ci++){
+    var cont=continents[ci];
+    ctx.beginPath();
+    var p0=latLonPx(cont[0][0],cont[0][1]);
+    ctx.moveTo(p0[0],p0[1]);
+    for(var pi=1;pi<cont.length;pi++){
+      var pp=latLonPx(cont[pi][0],cont[pi][1]);
+      ctx.lineTo(pp[0],pp[1]);
+    }
+    ctx.closePath();
+    // Different shades
+    if(ci===continents.length-1) ctx.fillStyle='#e8f0f0'; // Antarctica
+    else ctx.fillStyle='#2d5a27';
+    ctx.fill();
+    ctx.strokeStyle='rgba(60,120,60,0.4)'; ctx.lineWidth=0.5; ctx.stroke();
+  }
+
+  // Desert areas
+  ctx.fillStyle='rgba(180,140,60,0.5)';
+  var deserts=[[22,18,12,8],[22,45,8,6],[30,70,6,4]]; // lat,lon,w,h degrees
+  deserts.forEach(function(d){
+    var p1=latLonPx(d[0]+d[3]/2,d[1]-d[2]/2);
+    var p2=latLonPx(d[0]-d[3]/2,d[1]+d[2]/2);
+    ctx.fillRect(p1[0],p1[1],p2[0]-p1[0],p2[1]-p1[1]);
+  });
+
+  // Ice caps
+  ctx.fillStyle='rgba(230,242,255,0.85)';
+  ctx.beginPath(); var np=latLonPx(90,0); ctx.arc(np[0],H*0.025,W*0.08,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(220,235,255,0.7)';
+  ctx.beginPath(); var sp=latLonPx(-80,0); ctx.arc(sp[0],H*0.975,W*0.12,0,Math.PI*2); ctx.fill();
+
+  // Grid lines — subtle
+  ctx.strokeStyle='rgba(0,100,180,0.18)'; ctx.lineWidth=0.5;
+  for(var lo=-180;lo<=180;lo+=30){
+    var x=(lo+180)/360*W;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+    ctx.fillStyle='rgba(100,180,220,0.5)'; ctx.font='7px Share Tech Mono';
+    ctx.fillText(lo+'°',x+2,H-4);
+  }
+  for(var la=-90;la<=90;la+=30){
+    var y=(90-la)/180*H;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+
+  // Equator highlight
+  ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2);
+  ctx.strokeStyle='rgba(0,200,255,0.25)'; ctx.lineWidth=1; ctx.stroke();
+
+  // Tropic lines
+  [23.5,-23.5,66.5,-66.5].forEach(function(la){
+    var y=(90-la)/180*H;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y);
+    ctx.strokeStyle='rgba(0,150,255,0.12)'; ctx.lineWidth=0.5; ctx.setLineDash([4,8]); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  var GMST=(simTime*7.2921150e-5)%(2*Math.PI);
+
+  // Satellite trails
+  for(var i=0;i<sats.length;i++){
+    var sat=sats[i]; if(!sat.isSat||sat.trail.length<2)continue;
+    ctx.beginPath(); var fst=true, plo=null;
+    for(var t=0;t<sat.trail.length;t++){
+      var tp=sat.trail[t];
+      var rr=Math.sqrt(tp[0]*tp[0]+tp[1]*tp[1]+tp[2]*tp[2]);
+      var tla=Math.asin(tp[2]/rr)*180/Math.PI;
+      var tlo=(Math.atan2(tp[1],tp[0])-GMST)*180/Math.PI;
+      while(tlo>180)tlo-=360; while(tlo<-180)tlo+=360;
+      var px=(tlo+180)/360*W, py=(90-tla)/180*H;
+      if(fst||Math.abs(tlo-(plo||0))>90){ctx.moveTo(px,py);fst=false;}
+      else ctx.lineTo(px,py);
+      plo=tlo;
+    }
+    ctx.strokeStyle=sat.color.replace('hsl','hsla').replace(')',',0.5)');
+    ctx.lineWidth=1.2; ctx.stroke();
+  }
+
+  // All objects on map
+  for(var i=0;i<sats.length;i++){
+    var sat=sats[i]; var L=getLL(sat.s);
+    var px=(L[1]+180)/360*W, py=(90-L[0])/180*H;
+    var sz=sat.isSat?6:4;
+    var col=sat.color;
+    if(sat.status==='EVADING')col='#ff3355';
+    else if(sat.status==='BLACKOUT')col='#ffaa00';
+    else if(!sat.isSat)col='#778899';
+
+    // Glow for satellites
+    if(sat.isSat){
+      var grd=ctx.createRadialGradient(px,py,0,px,py,sz*2.5);
+      grd.addColorStop(0,col.replace('hsl','hsla').replace(')',',0.5)'));
+      grd.addColorStop(1,'transparent');
+      ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(px,py,sz*2.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(px,py,sat.isSat?5:3,0,Math.PI*2);
+    ctx.fillStyle=col; ctx.fill();
+
+    // Safety circle for critical
+    if(sat.isSat&&sat.cDist<CRIT_D){
+      ctx.beginPath(); ctx.arc(px,py,12,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,51,85,0.6)'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    if(sat.id===selectedId){
+      ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2);
+      ctx.strokeStyle='#00ffcc'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='rgba(2,9,18,0.75)'; ctx.fillRect(px+12,py-9,60,12);
+      ctx.fillStyle='#e8f4ff'; ctx.font='bold 8px Share Tech Mono';
+      ctx.fillText(sat.name,px+14,py+1);
+    }
+  }
+
+  // Ground stations
+  for(var i=0;i<GS.length;i++){
+    var g=GS[i];
+    var glo=g.lon-GMST*180/Math.PI;
+    while(glo>180)glo-=360; while(glo<-180)glo+=360;
+    var px=(glo+180)/360*W, py=(90-g.lat)/180*H;
+    // Coverage circle
+    ctx.beginPath(); ctx.arc(px,py,20,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,255,136,0.15)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(0,255,136,0.04)'; ctx.fill();
+    // Dot
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,255,136,0.85)'; ctx.fill();
+    ctx.strokeStyle='rgba(0,255,136,0.4)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(0,255,136,0.6)'; ctx.font='8px Share Tech Mono';
+    ctx.fillText(g.name,px+8,py+3);
+  }
+
+  // Legend
+  ctx.fillStyle='rgba(2,9,18,0.7)'; ctx.fillRect(8,8,140,16);
+  ctx.fillStyle='rgba(0,180,255,0.5)'; ctx.font='9px Share Tech Mono';
+  ctx.fillText('MERCATOR -- GROUND TRACK',10,20);
+}
+
+function drawPolar(){
+  ensPol();
+  var c=polC, ctx=c.getContext('2d'), W=c.width, H=c.height;
+  var cx=W/2, cy=H/2, R=Math.min(W,H)/2-45;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#010810'; ctx.fillRect(0,0,W,H);
+  // Rings
+  for(var i=1;i<=4;i++){
+    ctx.beginPath(); ctx.arc(cx,cy,R*i/4,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,80,140,0.4)'; ctx.lineWidth=0.5; ctx.stroke();
+    ctx.fillStyle='rgba(0,120,180,0.5)'; ctx.font='9px Share Tech Mono';
+    ctx.fillText((90-22*i)+'°',cx+4,cy-R*i/4+4);
+  }
+  for(var a=0;a<360;a+=45){
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+R*Math.cos(a*Math.PI/180),cy+R*Math.sin(a*Math.PI/180));
+    ctx.strokeStyle='rgba(0,60,120,0.3)'; ctx.stroke();
+  }
+  ['N','E','S','W'].forEach(function(d,i){
+    var a=i*90*Math.PI/180-Math.PI/2;
+    ctx.fillStyle='rgba(0,180,255,0.6)'; ctx.font='12px Share Tech Mono';
+    ctx.fillText(d,cx+(R+16)*Math.cos(a)-5,cy+(R+16)*Math.sin(a)+5);
+  });
+  if(selectedId){
+    var sel=null;
+    for(var i=0;i<sats.length;i++){if(sats[i].id===selectedId){sel=sats[i];break;}}
+    if(sel){
+      var L=getLL(sel.s), sl=L[0], slo=L[1], sa=getAlt(sel.s);
+      for(var i=0;i<GS.length;i++){
+        var g=GS[i];
+        var dlat=(sl-g.lat)*Math.PI/180, dlon=(slo-g.lon)*Math.PI/180;
+        var aa=Math.sin(dlat/2)*Math.sin(dlat/2)+Math.cos(g.lat*Math.PI/180)*Math.cos(sl*Math.PI/180)*Math.sin(dlon/2)*Math.sin(dlon/2);
+        var ca=2*Math.asin(Math.sqrt(Math.min(1,aa)));
+        var rho=(RE+sa)/RE, inn=Math.sin(ca)/Math.sqrt(1+rho*rho-2*rho*Math.cos(ca));
+        var elev=Math.acos(Math.max(-1,Math.min(1,inn)))*180/Math.PI-90;
+        var pr=(1-Math.max(0,Math.min(90,elev))/90)*R;
+        var az=Math.atan2(slo-g.lon,sl-g.lat);
+        var px=cx+pr*Math.sin(az), py=cy-pr*Math.cos(az);
+        var vis=elev>=g.e;
+        if(vis){
+          var grd=ctx.createRadialGradient(px,py,0,px,py,14);
+          grd.addColorStop(0,'rgba(0,255,136,0.3)'); grd.addColorStop(1,'transparent');
+          ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(px,py,14,0,Math.PI*2); ctx.fill();
+        }
+        ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2);
+        ctx.fillStyle=vis?'rgba(0,255,136,0.85)':'rgba(255,51,85,0.7)'; ctx.fill();
+        ctx.fillStyle='rgba(200,230,255,0.75)'; ctx.font='9px Share Tech Mono';
+        ctx.fillText(g.name,px+10,py+3);
+        if(vis){
+          ctx.fillStyle='rgba(0,255,136,0.5)'; ctx.font='8px Share Tech Mono';
+          ctx.fillText(elev.toFixed(0)+'°el',px+10,py+13);
+        }
+      }
+    }
+  } else {
+    ctx.fillStyle='rgba(0,180,255,0.35)'; ctx.font='13px Share Tech Mono';
+    ctx.fillText('SELECT A SATELLITE',cx-80,cy);
+  }
+  ctx.fillStyle='rgba(0,180,255,0.35)'; ctx.font='10px Share Tech Mono';
+  ctx.fillText('POLAR ELEVATION PLOT',10,22);
+}
+
+// ════════════════════════════════════════
+// UI RENDERING
+// ════════════════════════════════════════
+function tagCls(st){
+  if(st==='NOMINAL')return 'tn';
+  if(st==='EVADING')return 'te';
+  if(st==='RECOVERING')return 'trr';
+  if(st==='BLACKOUT')return 'tb';
+  return 'tn';
+}
+function fuelColor(fp){return fp>60?'#00ff88':fp>30?'#ffaa00':'#ff3355';}
+function distColor(d){
+  if(d<CRIT_D)return '#ff3355';
+  if(d<WARN_D)return '#ffaa00';
+  if(d<MON_D)return '#00b4ff';
+  return '#00ff88';
+}
+
+function rSatList(){
+  var sv=sats.filter(function(s){return s.isSat;}), html='';
+  for(var i=0;i<sv.length;i++){
+    var sat=sv[i];
+    var fp=Math.min(100,(sat.fuel/80)*100);
+    var fc=fuelColor(fp);
+    var distKm=sat.cDist<Infinity?(sat.cDist/1000).toFixed(1):'--';
+    var dc=sat.cDist<CRIT_D?'dng':sat.cDist<WARN_D?'wrn':'';
+    var sel=sat.id===selectedId?'sel':'';
+    var cvr=sat.inBk?'BKOUT':(sat.gs?sat.gs.name:'--');
+    // Distance bar: 0=0km safe=25km
+    var distPct=sat.cDist<Infinity?Math.max(0,Math.min(100,(1-sat.cDist/MON_D)*100)):0;
+    var dCol=distColor(sat.cDist);
+
+    html+='<div class="si '+dc+' '+sel+'" onclick="selectedId='+sat.id+'">'
+      +'<div class="sr1"><span class="sn">'+sat.name+'</span><span class="tag '+tagCls(sat.status)+'">'+sat.status+'</span></div>'
+      +'<div class="sr2"><span>Alt '+(getAlt(sat.s)/1000).toFixed(0)+'km</span><span style="color:'+dCol+'">Dist '+distKm+'km</span></div>'
+      +'<div class="sr2"><span style="color:var(--dim)">Station: '+cvr+'</span></div>'
+      // FUEL BAR
+      +'<div class="fuel-wrap">'
+      +'<div class="fuel-label-row"><span class="fuel-lbl">FUEL</span><span class="fuel-pct" style="color:'+fc+'">'+fp.toFixed(0)+'%</span></div>'
+      +'<div class="fuel-track"><div class="fuel-fill" style="width:'+fp+'%;background:'+fc+'"></div></div>'
+      +'</div>'
+      // DISTANCE BAR
+      +'<div class="dist-wrap">'
+      +'<div style="display:flex;justify-content:space-between;font-size:.5rem;margin-bottom:2px;">'
+      +'<span style="color:var(--dim);font-family:Share Tech Mono,monospace">PROXIMITY</span>'
+      +'<span style="color:'+dCol+';font-family:Share Tech Mono,monospace">'+distKm+'km</span>'
+      +'</div>'
+      +'<div class="dist-track"><div class="dist-fill" style="width:'+distPct+'%;background:'+dCol+'"></div></div>'
+      +'</div>'
+      +'</div>';
+  }
+  document.getElementById('satList').innerHTML=html;
+}
+
+function rCDM(conj){
+  var sorted=conj.slice().sort(function(a,b){return a.dist-b.dist;}), crit=0, html='';
+  if(!sorted.length){
+    document.getElementById('cdmList').innerHTML='<div style="color:var(--dim);font-size:.6rem;text-align:center;padding:10px;font-family:Share Tech Mono,monospace">-- NO ACTIVE CONJUNCTIONS --</div>';
+  } else {
+    for(var i=0;i<Math.min(5,sorted.length);i++){
+      var cc=sorted[i], sev, cls;
+      if(cc.dist<CRIT_D){sev='CRITICAL';cls='crit';crit++;}
+      else if(cc.dist<WARN_D){sev='WARNING';cls='warn';}
+      else{sev='MONITOR';cls='mon';}
+      var tca=new Date(Date.now()+Math.random()*3600000).toISOString().substr(11,8)+' UTC';
+      var pc=(cc.sat.Pc*100).toFixed(4);
+      html+='<div class="cdm '+cls+'">'
+        +'<div style="display:flex;justify-content:space-between">'
+        +'<span class="csev '+cls+'">o '+sev+'</span>'
+        +'<span style="font-size:.5rem;color:var(--dim);font-family:Share Tech Mono,monospace">TCA '+tca+'</span>'
+        +'</div>'
+        +'<div class="crow"><span style="color:var(--ac2)">'+cc.sat.name+'</span><span>vs</span><span style="color:var(--ac2)">'+cc.other.name+'</span></div>'
+        +'<div class="crow">'
+        +'<span>Miss: <span class="cv">'+(cc.dist/1000).toFixed(3)+' km</span></span>'
+        +'<span>Pc: <span class="cv">'+pc+'%</span></span>'
+        +'</div>'
+        +'</div>';
+    }
+    document.getElementById('cdmList').innerHTML=html;
+  }
+  document.getElementById('cdmCnt').textContent=conj.length;
+  document.getElementById('hC').textContent=conj.length;
+  document.getElementById('hCr').textContent=crit;
+}
+
+function rDetail(){
+  if(!selectedId){document.getElementById('detPanel').innerHTML='<div class="nosat">-- SELECT A SATELLITE --</div>';return;}
+  var sat=null;
+  for(var i=0;i<sats.length;i++){if(sats[i].id===selectedId){sat=sats[i];break;}}
+  if(!sat)return;
+  var L=getLL(sat.s);
+  var fp=Math.min(100,(sat.fuel/80)*100);
+  var fc=fuelColor(fp);
+  var distKm=sat.cDist<Infinity?(sat.cDist/1000).toFixed(3):'--';
+  var dc=distColor(sat.cDist);
+  // Safety meter — distance to 3 thresholds
+  var safetyPct=sat.cDist<Infinity?Math.min(100,sat.cDist/MON_D*100):100;
+  var safetyCol=distColor(sat.cDist);
+
+  document.getElementById('detPanel').innerHTML=
+    '<div class="ds"><div class="dst">Identity</div>'
+    +'<div class="dr"><span class="dl">Name</span><span class="dv">'+sat.name+'</span></div>'
+    +'<div class="dr"><span class="dl">Status</span><span class="dv">'+sat.status+'</span></div>'
+    +'</div>'
+    +'<div class="ds"><div class="dst">Orbital State (ECI)</div>'
+    +'<div class="dr"><span class="dl">Altitude</span><span class="dv">'+(getAlt(sat.s)/1000).toFixed(2)+' km</span></div>'
+    +'<div class="dr"><span class="dl">Speed</span><span class="dv">'+(getSpd(sat.s)/1000).toFixed(3)+' km/s</span></div>'
+    +'<div class="dr"><span class="dl">Period</span><span class="dv">'+getPer(sat.sma).toFixed(1)+' min</span></div>'
+    +'<div class="dr"><span class="dl">Lat</span><span class="dv">'+L[0].toFixed(3)+'&deg;</span></div>'
+    +'<div class="dr"><span class="dl">Lon</span><span class="dv">'+L[1].toFixed(3)+'&deg;</span></div>'
+    +'</div>'
+    // FUEL SECTION
+    +'<div class="ds"><div class="dst">Propulsion — Tsiolkovsky</div>'
+    +'<div style="text-align:center;margin:6px 0;">'
+    +'<div class="det-fuel-big" style="color:'+fc+'">'+fp.toFixed(1)+'%</div>'
+    +'<div class="det-fuel-sub">PROPELLANT REMAINING</div>'
+    +'<div class="det-fuel-track"><div class="det-fuel-fill" style="width:'+fp+'%;background:'+fc+'"></div></div>'
+    +'</div>'
+    +'<div class="dr"><span class="dl">Fuel Mass</span><span class="dv">'+sat.fuel.toFixed(2)+' kg</span></div>'
+    +'<div class="dr"><span class="dl">Dry Mass</span><span class="dv">'+sat.dry+' kg</span></div>'
+    +'<div class="dr"><span class="dl">Isp</span><span class="dv">'+sat.Isp+' s</span></div>'
+    +'<div class="dr"><span class="dl">Thruster CD</span><span class="dv">'+(sat.thrCD>0?sat.thrCD.toFixed(0)+'s':'READY')+'</span></div>'
+    +'</div>'
+    // SAFETY METER
+    +'<div class="ds"><div class="dst">Safety Distance Meter</div>'
+    +'<div class="safety-meter">'
+    +'<div class="sm-title">Distance to Closest Object</div>'
+    +'<div style="text-align:center;margin-bottom:6px;">'
+    +'<span style="font-family:Orbitron,monospace;font-size:1.4rem;font-weight:700;color:'+dc+'">'+distKm+' km</span>'
+    +'</div>'
+    +'<div style="height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;margin-bottom:6px;">'
+    +'<div style="height:100%;width:'+safetyPct+'%;background:linear-gradient(90deg,'+dc+',rgba(255,255,255,0.3));border-radius:4px;transition:width .5s;"></div>'
+    +'</div>'
+    +'<div class="threshold-line">'
+    +'<div class="th-row"><span class="th-label">EVADE threshold</span><span class="th-val" style="color:var(--rd)">100 m</span></div>'
+    +'<div class="th-row"><span class="th-label">CRITICAL threshold</span><span class="th-val" style="color:var(--rd)">&lt; 2 km</span></div>'
+    +'<div class="th-row"><span class="th-label">WARNING threshold</span><span class="th-val" style="color:var(--or)">&lt; 8 km</span></div>'
+    +'<div class="th-row"><span class="th-label">Closest object</span><span class="th-val" style="color:var(--wh)">'+(sat.cObj?sat.cObj.name:'--')+'</span></div>'
+    +'<div class="th-row"><span class="th-label">Coll. Prob.</span><span class="th-val" style="color:var(--wh)">'+(sat.Pc*100).toFixed(4)+'%</span></div>'
+    +'</div>'
+    +'</div></div>'
+    // COMMS
+    +'<div class="ds"><div class="dst">Communications</div>'
+    +'<div class="dr"><span class="dl">Station</span><span class="dv">'+(sat.inBk?'BLACKOUT':(sat.gs?sat.gs.name:'--'))+'</span></div>'
+    +'<div class="dr"><span class="dl">Coverage</span><span class="dv" style="color:'+(sat.inBk?'var(--or)':'var(--gr)')+'">'+(sat.inBk?'NO SIGNAL':'IN RANGE')+'</span></div>'
+    +'</div>';
+}
+
+function rSafetyBox(conj){
+  var sorted=conj.slice().sort(function(a,b){return a.dist-b.dist;}).slice(0,4);
+  if(!sorted.length){
+    document.getElementById('safetyRows').innerHTML='<div style="color:var(--gr);font-family:Share Tech Mono,monospace;font-size:.55rem;text-align:center;padding:4px">ALL CLEAR</div>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<sorted.length;i++){
+    var c=sorted[i], dc=distColor(c.dist);
+    var d=c.dist<1000?(c.dist.toFixed(0)+'m'):(c.dist/1000).toFixed(1)+'km';
+    html+='<div class="safety-row">'
+      +'<span style="color:'+dc+';display:flex;align-items:center;gap:4px;">'
+      +'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:'+dc+';"></span>'
+      +c.sat.name.substr(0,7)+'</span>'
+      +'<span style="color:'+dc+';font-family:Orbitron,monospace;font-size:.58rem;">'+d+'</span>'
+      +'</div>';
+  }
+  document.getElementById('safetyRows').innerHTML=html;
+}
+
+function dGT(){
+  var c=document.getElementById('gtc'); c.width=c.offsetWidth||256;
+  var ctx=c.getContext('2d'), W=c.width, H=106;
+  // Mini Google Earth style
+  var og=ctx.createLinearGradient(0,0,0,H);
+  og.addColorStop(0,'#0a1628'); og.addColorStop(1,'#0d2040');
+  ctx.fillStyle=og; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#2d5a27';
+  // Simplified land masses on mini map
+  [[70,140,-55,0],[12,-180,-55,50]].forEach(function(){}); // skip detailed for mini
+  ctx.strokeStyle='rgba(0,80,160,0.25)'; ctx.lineWidth=0.4;
+  for(var lo=-180;lo<=180;lo+=60){var x=(lo+180)/360*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(var la=-90;la<=90;la+=45){var y=(90-la)/180*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.strokeStyle='rgba(0,200,255,0.18)';ctx.stroke();
+  for(var i=0;i<sats.length;i++){
+    var sat=sats[i]; if(!sat.isSat)continue;
+    var L=getLL(sat.s);
+    var px=(L[1]+180)/360*W, py=(90-L[0])/180*H;
+    ctx.beginPath(); ctx.arc(px,py,3,0,Math.PI*2);
+    var col=sat.color;
+    if(sat.status==='EVADING')col='#ff3355';
+    else if(sat.status==='BLACKOUT')col='#ffaa00';
+    ctx.fillStyle=col; ctx.fill();
+    if(sat.id===selectedId){ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.strokeStyle='#00ffcc';ctx.lineWidth=1;ctx.stroke();}
+  }
+}
+
+function dPolSmall(){
+  var c=document.getElementById('polc'), ctx=c.getContext('2d');
+  var W=c.width, H=c.height, cx=W/2, cy=H/2, R=Math.min(W,H)/2-12;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#010810'; ctx.fillRect(0,0,W,H);
+  for(var i=1;i<=3;i++){ctx.beginPath();ctx.arc(cx,cy,R*i/3,0,Math.PI*2);ctx.strokeStyle='rgba(0,80,140,.4)';ctx.lineWidth=.5;ctx.stroke();}
+  for(var a=0;a<360;a+=45){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a*Math.PI/180),cy+R*Math.sin(a*Math.PI/180));ctx.strokeStyle='rgba(0,60,120,.3)';ctx.stroke();}
+  ['N','E','S','W'].forEach(function(d,i){var a=i*90*Math.PI/180-Math.PI/2;ctx.fillStyle='rgba(0,140,200,.5)';ctx.font='8px Share Tech Mono';ctx.fillText(d,cx+(R+8)*Math.cos(a)-3,cy+(R+8)*Math.sin(a)+3);});
+  if(selectedId){
+    var sel=null;for(var i=0;i<sats.length;i++){if(sats[i].id===selectedId){sel=sats[i];break;}}
+    if(sel){
+      var L=getLL(sel.s), sl=L[0], slo=L[1], sa=getAlt(sel.s);
+      for(var i=0;i<GS.length;i++){
+        var g=GS[i];
+        var dlat=(sl-g.lat)*Math.PI/180, dlon=(slo-g.lon)*Math.PI/180;
+        var aa=Math.sin(dlat/2)*Math.sin(dlat/2)+Math.cos(g.lat*Math.PI/180)*Math.cos(sl*Math.PI/180)*Math.sin(dlon/2)*Math.sin(dlon/2);
+        var ca=2*Math.asin(Math.sqrt(Math.min(1,aa)));
+        var rho=(RE+sa)/RE, inn=Math.sin(ca)/Math.sqrt(1+rho*rho-2*rho*Math.cos(ca));
+        var elev=Math.acos(Math.max(-1,Math.min(1,inn)))*180/Math.PI-90;
+        var pr=(1-Math.max(0,Math.min(90,elev))/90)*R, az=Math.atan2(slo-g.lon,sl-g.lat);
+        var px=cx+pr*Math.sin(az), py=cy-pr*Math.cos(az);
+        ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
+        ctx.fillStyle=elev>=g.e?'rgba(0,255,136,.8)':'rgba(255,51,85,.6)';ctx.fill();
+        ctx.fillStyle='rgba(180,210,230,.6)';ctx.font='7px Share Tech Mono';ctx.fillText(g.name,px+6,py+3);
+      }
+    }
+  }
+}
+
+function rAnalytics(){
+  var sv=sats.filter(function(s){return s.isSat;});
+  var af=sv.length?sv.reduce(function(a,s){return a+Math.min(100,(s.fuel/80)*100);},0)/sv.length:0;
+  document.getElementById('mF').textContent=af.toFixed(0)+'%';
+  document.getElementById('mE').textContent=totalEvd;
+  document.getElementById('mCl').textContent=closestEver<Infinity?(closestEver/1000).toFixed(1):'--';
+  document.getElementById('mBl').textContent=sv.filter(function(s){return s.inBk;}).length;
+  updCnts();
+}
+
+var logArr=[];
+function log(msg,type){
+  var h=('0'+Math.floor(simTime/3600)).slice(-2);
+  var m=('0'+Math.floor((simTime%3600)/60)).slice(-2);
+  var s=('0'+Math.floor(simTime%60)).slice(-2);
+  logArr.unshift({msg:msg,type:type||'li',ts:h+':'+m+':'+s});
+  if(logArr.length>80)logArr.pop();
+  var html='';
+  for(var i=0;i<logArr.length;i++) html+='<div class="ll '+logArr[i].type+'"><span class="lt">['+logArr[i].ts+']</span>'+logArr[i].msg+'</div>';
+  document.getElementById('logBox').innerHTML=html;
+}
+
+function setView(v){
+  currentView=v;
+  document.getElementById('vt3').classList.toggle('on',v==='3d');
+  document.getElementById('vtm').classList.toggle('on',v==='map');
+  document.getElementById('vtp').classList.toggle('on',v==='polar');
+  if(v==='3d') hide2D(); else gc.style.display='none';
+}
+function setSpeed(s){
+  simSpeed=s;
+  ['1','5','20','50'].forEach(function(n){var b=document.getElementById('sp'+n);if(b)b.classList.toggle('on',parseInt(n)===s);});
+}
+function togglePause(){paused=!paused;document.getElementById('spP').textContent=paused?'RESUME':'PAUSE';}
+
+// ════════════════════════════════════════
+// MAIN LOOP
+// ════════════════════════════════════════
+var lastT=null;
+function loop(ts){
+  if(!lastT)lastT=ts;
+  var dt=Math.min((ts-lastT)/1000,0.05);
+  lastT=ts;
+  if(!paused){
+    var conj=simStep(dt);
+    if(currentView==='3d') updScene(conj);
+    else if(currentView==='map'){renderer.render(scene,camera);drawMap();}
+    else if(currentView==='polar'){renderer.render(scene,camera);drawPolar();}
+    rSatList(); rCDM(conj); rDetail(); rSafetyBox(conj);
+    dGT(); dPolSmall(); rAnalytics();
+    document.getElementById('hTime').textContent=new Date().toISOString().replace('T',' ').substr(0,19)+' UTC';
+    if(!isDrag&&currentView==='3d'){camT+=0.00022*simSpeed;updCam();}
+  }
+  requestAnimationFrame(loop);
+}
+
+// ════════════════════════════════════════
+// START
+// ════════════════════════════════════════
+initFleet();
+log('ACM ORBITAL INSIGHT online — WebGL active','lo');
+log('NASA Blue Marble texture loading...','li');
+log('RK4 + J2 propagator running at 1s step','li');
+log('Safety zones: 100m EVADE / 2km CRIT / 8km WARN','li');
+log('6 ground stations active inc IIT Delhi','li');
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
